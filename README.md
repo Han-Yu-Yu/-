@@ -11,6 +11,24 @@ ll ksm(ll a,ll n,ll p)
     return s;
 }
 -
+#扩展欧几里得(exgcd)
+void exgcd(long long a, long long b)
+{
+	if (b == 0)
+	{
+		rx = 1;
+		d = a;
+		ry = 0;
+		return;
+	}
+	exgcd(b, a % b);
+	px = rx;
+	py = ry;
+	rx = py;
+	ry = px - py * (a / b);
+	return;
+}
+-
 
 #线性求1-n的逆元
 inv[1] = 1;
