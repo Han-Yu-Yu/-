@@ -370,3 +370,59 @@ int main()
 	return 0;
 }
 -
+#扩展中国剩余定理（excrt）
+const int N = 1e5 + 10;
+typedef long long ll;
+ll x, y, d;
+int n;
+ll m[N], r[N];
+ll gui(ll a, ll b, ll p) // 龟速乘防止爆longlong
+{
+	a = (a % p + p) % p;
+	ll res = 0;
+	while (b)
+	{
+		if (b & 1)
+			res = (res + a) % p;
+		b /= 2;
+		a = (a + a) % p;
+	}
+	return res;
+}
+void exgcd(ll a, ll b){if (b == 0){x = 1;y = 0;d = a;return;}exgcd(b, a % b);ll tx = x;ll ty = y;x = ty;y = tx - ty * (a / b);}
+
+ll excrt()
+{
+	ll tail = 0, llcm = 1, tmp, b, c, x0;
+	// ans = lcm * x + tail
+	for (int i = 0; i < n; i++)
+	{
+		// ans = m[i] * y + ri
+		// lcm * x + m[i] * y = ri - tail
+		// a = lcm
+		// b = m[i]
+		// c = ri - tail
+		b = m[i];
+		c = ((r[i] - tail) % b + b) % b;
+		exgcd(llcm, b);
+		if (c % d)
+		{
+			return -1;
+		}
+		// ax + by = gcd(a,b)，特解是，x变量
+		// ax + by = c，特解是，x变量 * (c/d)
+		// ax + by = c，最小非负特解x0 = (x * (c/d)) % (b/d) 取非负余数
+		// 通解 = x0 + (b/d) * n
+		x0 = gui(x, c / d, b / d);
+	    // 最小非负特解x0
+		// ans = lcm * x + tail，带入通解
+		// ans = lcm * (x0 + (b/d) * n) + tail
+		// ans = lcm * (b/d) * n + lcm * x0 + tail
+		// tail' = tail' % lcm'
+		tmp = llcm * (b / d);
+		tail = (tail + gui(llcm, x0, tmp)) % tmp;
+		llcm = tmp;
+	}
+	return tail;
+}
+-
