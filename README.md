@@ -426,3 +426,23 @@ ll excrt()
 	return tail;
 }
 -
+#中国剩余定理（crt）
+ll crt()
+{
+	ll llcm = 1;
+	ll ans = 0, ci, ai;
+	for (int i = 0; i < n; i ++)
+	{
+		llcm *= m[i];
+	}
+	for (int i = 0; i < n; i++)
+	{
+		ai = llcm / m[i];
+		exgcd(ai, m[i]);
+		x = (x % m[i] + m[i]) % m[i]; // 确保逆元为正数
+		ci = gui(r[i] , gui(ai , x , llcm), llcm);
+		ans = (ans + ci) % llcm;
+	}
+	return ans;
+}
+-
