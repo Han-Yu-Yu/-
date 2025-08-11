@@ -446,3 +446,12 @@ ll crt()
 	return ans;
 }
 -
+#kn+1法判质数（比试除法快3~4倍左右）
+bool isPrime(ll n){
+    if(n == 2 || n == 3 || n == 5)return 1;
+    if(n % 2 == 0 || n % 3 == 0 || n % 5 == 0 || n == 1) return 0;
+    ll c = 7, a[8] = {4,2,4,2,4,6,2,6};
+    while(c * c <= n) for(auto i : a){if(n % c == 0)return 0; c += i;}
+    return 1;
+}
+-
