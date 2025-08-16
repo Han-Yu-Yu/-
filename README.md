@@ -498,7 +498,7 @@ void solve()
 		cout << "no solution" << endl;
 		return;
 	}
-	map<ll, ll> mp;
+	unordered_map<ll, ll> mp;
 	ll m = (ll)sqrt(p) + 1;
 	for (int i = 0; i < m; i ++)
 	{
