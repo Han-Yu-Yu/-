@@ -455,3 +455,64 @@ bool isPrime(ll n){
     return 1;
 }
 -
+#大步小步算法（BSDS）（解决离散对数问题，分块思想）
+ll ksm(ll a, ll b, ll mod)
+{
+	ll s = 1;
+	while (b)
+	{
+		if (b & 1)
+			s = s * a % mod;
+		a = a * a % mod;
+		b >>= 1;
+	}
+	return s;
+}
+ll p, b, n;
+void solve()
+{
+	// b ^ x = n (mod p)
+	cin >> p >> b >> n;
+	if (n == 0)
+	{
+		if (b % p == 0)
+		{
+			cout << 1 << endl;
+			return;
+		}
+		cout << "no solution" << endl;
+		return;
+	}
+	if (b == 0)
+	{
+		cout << "no solution" << endl;
+		return;
+	}
+	if (n == 1)
+	{
+		cout << 0 << endl;
+		return;
+	}
+	if (b % p == 1 || b % p == 0)
+	{
+		cout << "no solution" << endl;
+		return;
+	}
+	map<ll, ll> mp;
+	ll m = (ll)sqrt(p) + 1;
+	for (int i = 0; i < m; i ++)
+	{
+		mp[n % p * ksm(b, i, p) % p] = i;
+	}
+	for (int i = 1; i <= m; i++)
+	{
+		if (mp.find(ksm(b, i * m, p)) != mp.end())
+		{
+			cout << i * m - mp[ksm(b, i * m, p)] << endl;
+			return;
+		}
+	}
+	cout << "no solution" << endl;
+	return;
+}
+-
