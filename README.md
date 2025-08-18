@@ -516,3 +516,52 @@ void solve()
 	return;
 }
 -
+#扩展大步小步(exBSGS) (a与p不互质)
+ll exBSGS(ll a, ll p, ll b) // a ^ x = b (mod p)
+{
+	a %= p;
+	b %= p;
+	if (b == 1 || p == 1)
+		return 0;
+	ll d, k = 0, A = 1;
+	while (1)
+	{
+		d = gcd(a, p);
+		if (d == 1)
+			break;
+		if (b % d)
+			return -1;
+		k++;
+		b /= d;
+		p /= d;
+		A = A * (a / d) % p;
+		if (A == b)
+			return k;
+	} // A*a^(im - j) = b / d (mod p / d)
+	ll m = ceil(sqrt(p));
+	ll t = b;
+	unordered_map<ll, ll> hash;
+	hash.reserve(m);
+	hash[b] = 0;
+	for (int j = 1; j < m; j++)
+	{
+		t = t * a % p;
+		hash[t] = j;
+	}
+	ll mi = 1;
+	for (int i = 1; i <= m; i++)
+	{
+		mi = mi * a % p;
+	}
+	t = A;
+	for (int i = 1; i <= m; i++)
+	{
+		t = t * mi % p;
+		if (hash.count(t))
+		{
+			return i * m - hash[t] + k;
+		}
+	}
+	return -1;
+}
+-
