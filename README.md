@@ -595,3 +595,421 @@ ll exBSGS(ll a, ll p, ll b) // a ^ x = b (mod p)
 }
 ```
 ---
+#Miller-Rabin素性检验（klogn）
+```cpp
+std::mt19937_64 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+
+long long fast_mul( long long a, long long b, long long mod ) {
+    long long ret = 0;
+    a %= mod;
+    while( b ){
+        if ( b & 1 ) ret = ( ret + a ) % mod;
+        b >>= 1;
+        a = ( a + a ) % mod;
+    }
+    return ret;
+}
+
+
+ll ksm(ll a, ll b, ll m)
+{
+	ll s = 1;
+	while (b)
+	{
+		if (b & 1)
+			s = fast_mul(s, a, m);
+		a = fast_mul(a, a, m);
+		b >>= 1;
+	}
+	return s;
+}
+
+bool Miller_Rabin(ll n)
+{
+	if (n == 2  || n == 3 )
+	{
+		return true;
+	}
+	if (n == 1 || n % 2 == 0)
+	{
+		return false;
+	}
+	long long d = n - 1LL;
+	int s = 0;
+	while (d % 2 == 0)
+		s++, d >>= 1;
+	for (int i = 0; i < 10; i ++)
+	{
+		long long a = rand() % (n - 3) + 2;
+		long long x = ksm( a, d, n );
+        long long y = 0;
+        for(int j = 0; j < s; j++ ) {
+            y = fast_mul( x, x, n );
+            if ( y == 1 && x != 1 && x != n - 1 ) return false;
+            x = y;
+        }
+        if ( y != 1 ) return false;
+
+	}
+	return true;
+}
+```
+---
+#Miller-Rabin素性检验简化版（4logn）（int内）
+```cpp
+ll ksm(ll a, ll b, ll m)
+{
+	ll s = 1;
+	while (b > 0)
+	{
+		if (b & 1) s = s * a % m;
+		a = a * a % m;
+		b >>= 1;
+	}
+	return s;
+}
+
+bool Miller_Rabin(ll x)
+{
+	if (x % 2 == 0 || x % 3 == 0 || x % 5 == 0 || x % 7 == 0)
+	{
+		return false;
+	}
+	ll temp[5] = {2, 3, 5, 7};
+	for (int i = 0; i < 4; i ++)
+	{
+		if (ksm(temp[i], x - 1, x) != 1)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+```
+---
+#int_128
+```cpp
+inline void input(__int128 &s)
+{
+    s = 0;
+    char c = ' ';
+    while (c > '9' || c < '0')
+        c = getchar();
+    while (c >= '0' && c <= '9')
+    {
+        s = s * 10 + c - '0';
+        c = getchar();
+    }
+}
+
+inline void print(__int128 x)
+{
+    if (x < 0)
+    {
+        putchar('-');
+        x = -x;
+    }
+    if (x > 9)
+        print(x / 10);
+    putchar(x % 10 + '0');
+}
+```
+---
+#区间改查线段树
+```cpp
+int n, m;
+ll tree[N << 2];
+ll add[N << 2];
+ll arr[N];
+
+void up(int x)
+{
+	tree[x] = tree[x << 1] + tree[x << 1 | 1];
+	return;
+}
+
+void lazy(int i, ll v, int n)
+{
+	tree[i] += v * n;
+	add[i] += v;
+}
+
+void down(int i, int ln, int rn)
+{
+	if (add[i])
+	{
+		lazy(i << 1, add[i], ln);
+		lazy(i << 1 | 1, add[i], rn);
+		add[i] = 0;
+	}
+	return;
+}
+
+void build(int l, int r, int i)
+{
+	if (l == r)
+	{
+		tree[i] = arr[l];
+	}
+	else
+	{
+		int mid = l + r >> 1;
+		build(l, mid, i << 1);
+		build(mid + 1, r, i << 1 | 1);
+		up(i);
+	}
+	add[i] = 0;
+}
+
+void ad(int jobl, int jobr, ll jobv, int l, int r, int i)
+{
+	if (l >= jobl && r <= jobr)
+	{
+		lazy(i, jobv, r - l + 1);
+	}
+	else
+	{
+		int mid = l + r >> 1;
+		down(i, mid - l + 1, r - mid);
+		if (jobl <= mid)
+		{
+			ad(jobl, jobr, jobv, l, mid, i << 1);
+		}
+		if (jobr > mid)
+		{
+			ad(jobl, jobr, jobv, mid + 1, r, i << 1 | 1);
+		}
+		up(i);
+	}
+}
+
+ll query(int jobl, int jobr, int l, int r, int i)
+{
+	if (l >= jobl && r <= jobr)
+	{
+		return tree[i];
+	}
+	int mid = l + r >> 1;
+	down(i, mid - l + 1, r - mid);
+	ll ans = 0;
+	if (jobl <= mid)
+	{
+		ans += query(jobl, jobr, l, mid, i << 1);
+	}
+	if (jobr > mid)
+	{
+		ans += query(jobl, jobr, mid + 1, r, i << 1 | 1);
+	}
+	return ans;
+}
+```
+---
+#随机数
+```cpp
+ull p[350010];
+void init_hash() {
+    mt19937_64 rng(time(0));
+    for (int i = 0; i < 350010; ++i) {
+        p[i] = rng();  // 使用随机数生成器
+    }
+}
+
+梅森素数哈希，通过异或可以得到唯一的另一个数：
+std::mt19937_64 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+```
+---
+
+#倍增求lca（nlogn）
+```cpp
+const int N = 5e5 + 10;
+int n, m, s;
+vector<int> e[N];
+int dep[N];
+int st[20][N];
+inline void dfs1(int x)
+{
+	for (int i = 0; i < e[x].size(); i++)
+	{
+		if (e[x][i] == st[0][x])
+			continue;
+		st[0][e[x][i]] = x;
+		dep[e[x][i]] = dep[x] + 1;
+		dfs1(e[x][i]);
+	}
+	return;
+}
+
+inline void dfs2(int x)
+{
+	for (int j = 1; j <= 19; j++)
+	{
+		st[j][x] = st[j - 1][st[j - 1][x]];
+		if (dep[st[j][x]] == 0)
+			break;
+	}
+	for (int i = 0; i < e[x].size(); i++)
+	{
+		if (e[x][i] == st[0][x])
+			continue;
+		dfs2(e[x][i]);
+	}
+}
+
+inline void init()
+{
+	dep[s] = 1;
+	dfs1(s);
+	dfs2(s);
+}
+
+inline int lca(int a, int b)
+{
+	if (dep[a] < dep[b])
+	{
+		while (dep[a] < dep[b])
+		{
+			int p = 19;
+			while (p >= 0 && dep[a] > dep[st[p][b]])
+			{
+				p--;
+			}
+			if (p == -1)
+				break;
+			// cout << "p: " << p << endl;
+			b = st[p][b];
+		}
+	}
+	else if (dep[a] > dep[b])
+	{
+		while (dep[a] > dep[b])
+		{
+			int p = 19;
+			while (p >= 0 && dep[st[p][a]] < dep[b])
+			{
+				p--;
+			}
+			if (p == -1)
+				break;
+			a = st[p][a];
+		}
+	}
+	if (a == b)
+	{
+		return a;
+	}
+	while (st[0][a] != st[0][b])
+	{
+		for (int j = 19; j >= 0; j--)
+		{
+			if (st[j][a] != st[j][b])
+			{
+				a = st[j][a];
+				b = st[j][b];
+			}
+		}
+	}
+	return st[0][a];
+}
+```
+---
+#tarjan求lca  O(n + q)
+```cpp
+int n, m, s;
+struct question
+{
+	int to;
+	int xh;
+};
+vector<int> e[N];
+vector<question> q[N];
+int a[N];
+int res[N];
+int flag[N];
+
+int find(int x)
+{
+	if (a[x] == x)
+	{
+		return x;
+	}
+	return a[x] = find(a[x]);
+}
+
+void dfs(int st, int fa)
+{
+	for (int i = 0; i < e[st].size(); i++)
+	{
+		if (e[st][i] == fa)
+			continue;
+		flag[e[st][i]] = 1;
+		for (int j = 0; j < q[e[st][i]].size(); j++)
+		{
+			if (flag[q[e[st][i]][j].to])
+			{
+				//cout << e[st][i] << " to: " << q[e[st][i]][j].to << endl;
+				res[q[e[st][i]][j].xh] = find(q[e[st][i]][j].to);
+			}
+		}
+		dfs(e[st][i], st);
+		a[find(e[st][i])] = st;
+	}
+}
+```
+---
+#树链剖分求lca（单次O（logn））
+```cpp
+vector<int> e[N];
+int fa[N];
+int son[N];
+int sz[N];
+int top[N];
+int dep[N];
+void dfs1(int x, int f)
+{
+	dep[x] = dep[f] + 1;
+	sz[x] = 1;
+	fa[x] = f;
+	for (int i : e[x])
+	{
+		if (i == f)
+			continue;
+		dfs1(i, x);
+		sz[x] += sz[i];
+		if (sz[son[x]] < sz[i])
+		{
+			son[x] = i;
+		}
+	}
+}
+
+void dfs2(int x, int f)
+{
+	top[x] = top[f];
+	if (!son[x])
+	{
+		return;
+	}
+	dfs2(son[x], x);
+	for (int i : e[x])
+	{
+		if (i == son[x] || i == fa[x])
+			continue;
+		dfs2(i, i);
+	}
+}
+
+int lca(int a, int b)
+{
+	while (top[a] != top[b])
+	{
+		if (dep[top[a]] < dep[top[b]])
+			swap(a, b);
+		// cout << "a: " << a << " b: " << b << endl;
+		if (top[a] != top[b])
+			a = fa[top[a]];
+	}
+	return dep[a] < dep[b] ? a : b;
+}
+
+```
+---
