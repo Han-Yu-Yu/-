@@ -1,4 +1,5 @@
 #快速幂 
+```cpp
 ll ksm(ll a,ll n,ll p)
 {
     ll s=1;
@@ -10,8 +11,10 @@ ll ksm(ll a,ll n,ll p)
     }
     return s;
 }
--
+```
+---
 #扩展欧几里得(exgcd)
+```cpp
 void exgcd(long long a, long long b)
 {
 	if (b == 0)
@@ -28,16 +31,20 @@ void exgcd(long long a, long long b)
 	ry = px - py * (a / b);
 	return;
 }
--
+```
+---
 
 #线性求1-n的逆元
+```cpp
 inv[1] = 1;
 for (int i = 2; i <= n; ++i) {
   inv[i] = (long long)(p - p / i) * inv[p % i] % p;
 }
--
+```
+---
 
 #二维树状数组（区间查询区间修改）
+```cpp
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -114,9 +121,11 @@ int main()
 	}
 	return 0;
 }
--
+```
+---
 
 #一维树状数组（区间查询区间修改）
+```cpp
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -204,9 +213,11 @@ int main()
 	}
 	return 0;
 }
--
+```
+---
 
 #一维树状数组（区间查询单点修改）
+```cpp
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -285,9 +296,12 @@ int main()
 	}
 	return 0;
 }
--
+```
+---
+
 
 #一维树状数组（单点查询区间修改）
+```cpp
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -369,8 +383,11 @@ int main()
 	}
 	return 0;
 }
--
+```
+---
+
 #扩展中国剩余定理（excrt）
+```cpp
 const int N = 1e5 + 10;
 typedef long long ll;
 ll x, y, d;
@@ -425,8 +442,11 @@ ll excrt()
 	}
 	return tail;
 }
--
+```
+---
+
 #中国剩余定理（crt）
+```cpp
 ll crt()
 {
 	ll llcm = 1;
@@ -445,8 +465,11 @@ ll crt()
 	}
 	return ans;
 }
--
+```
+---
+
 #kn+1法判质数（比试除法快3~4倍左右）
+```cpp
 bool isPrime(ll n){
     if(n == 2 || n == 3 || n == 5)return 1;
     if(n % 2 == 0 || n % 3 == 0 || n % 5 == 0 || n == 1) return 0;
@@ -454,8 +477,11 @@ bool isPrime(ll n){
     while(c * c <= n) for(auto i : a){if(n % c == 0)return 0; c += i;}
     return 1;
 }
--
+```
+---
+
 #大步小步算法（BSDS）（解决离散对数问题，分块思想）
+```cpp
 ll ksm(ll a, ll b, ll mod)
 {
 	ll s = 1;
@@ -515,8 +541,11 @@ void solve()
 	cout << "no solution" << endl;
 	return;
 }
--
+```
+---
+
 #扩展大步小步(exBSGS) (a与p不互质)
+```cpp
 ll exBSGS(ll a, ll p, ll b) // a ^ x = b (mod p)
 {
 	a %= p;
@@ -564,4 +593,5 @@ ll exBSGS(ll a, ll p, ll b) // a ^ x = b (mod p)
 	}
 	return -1;
 }
--
+```
+---
